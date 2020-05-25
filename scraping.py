@@ -38,6 +38,14 @@ for page_num in range(1,2):
             if meta:
                 movies[id]["genre"] = [e.text for e in meta]
             
+            movie_directors = [
+                link.text
+                for link in movie_zone.find("div", {"class": "meta-body-item meta-body-direction light"}
+                ).find_all(["a", "span"], class_=re.compile(r".*blue-link$"))
+            ]
+            movies[id]["directors"] = movie_directors
+
+
             revs = movie_zone.find_all('span', {"class": "stareval-note"})
             if len(revs) == 3:
                 movies[id]["press"] = revs[0].text
@@ -45,9 +53,7 @@ for page_num in range(1,2):
             elif len(revs) == 2:
                 movies[id]["spect"] = revs[0].text
             
-            print(f"{title}", movies[id])
-            print()
-            print(movies)
+        print(movies)
 
     time.sleep(random.randrange(5, 12))
 
