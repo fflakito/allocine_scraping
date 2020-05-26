@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 import time
 import random
 import re
-# import pandas as pd
-# from urllib.parse import urlsplit
+import pandas as pd
+from datetime import datetime
 
 headers = requests.utils.default_headers()
 headers.update(
@@ -36,27 +36,31 @@ for page_num in range(1,2):
 
             meta = movie_zone.find('div', {"class": "meta-body-item meta-body-info"}).find_all('span', class_= re.compile(r".*==$"))
             if meta:
-                movies[id]["genre"] = [e.text for e in meta]
+                movies[id]["genres"] = ", ".join([e.text for e in meta])
             
             movie_directors = [
                 link.text
                 for link in movie_zone.find("div", {"class": "meta-body-item meta-body-direction light"}
                 ).find_all(["a", "span"], class_=re.compile(r".*blue-link$"))
             ]
-            movies[id]["directors"] = movie_directors
+            movies[id]["directors"] = ", ".join(movie_directors)
 
 
             revs = movie_zone.find_all('span', {"class": "stareval-note"})
             if len(revs) == 3:
-                movies[id]["press"] = revs[0].text
-                movies[id]["spect"] = revs[1].text
+                movies[id]["press"] = revs[0].text.replace(",", ".")
+                movies[id]["spect"] = revs[1].text.replace(",", ".")
             elif len(revs) == 2:
-                movies[id]["spect"] = revs[0].text
+                movies[id]["spect"] = revs[0].text.replace(",", ".")
             
-        print(movies)
+    time.sleep(random.randrange(2, 5))
 
-    time.sleep(random.randrange(5, 12))
+df = pd.DataFrame.from_dict(movies, orient="index")
+df["allocine_id"] = df.index
+df.columns = ["TITLE", "RELEASE", "GENRES", "DIRECTORS", "PRESS_RATING", "PUB_RATING", "ALLOCINE_ID"]
+# print(df)
 
-with open('./results.txt', 'w') as f:
-    f.write(str(movies))
-    print("Created 'results.txt'.")
+now = datetime.now()
+dt_string = now.strftime("%Y%m%d_%H:%M:%S")
+
+df.to_csv("scraping-results" + dt_string + ".csv")
