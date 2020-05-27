@@ -1,5 +1,6 @@
 # Web-scraping Allociné
-# Basic scraping for metainformation from Allociné
+### Basic metainformation scraper for Allociné
 
-- Python3
-- The `get_movies.py` script shows how one could inject the data into a SQL database
+- The scripts are written in plain Python3, the dependencies can be installed with `pip install -r requirements.txt`.
+- `scraping.py` saves the scraped data into a time-stamped .csv file in the root directory.
+- `get_movies.py` shows how one could inject the data into a SQL database.
