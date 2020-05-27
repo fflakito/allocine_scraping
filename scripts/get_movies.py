@@ -8,8 +8,10 @@ try:
     cursor = connection.cursor()
     print(connection.get_dsn_parameters(),"\n")
 
-    cursor.execute("DROP TABLE IF EXISTS movies;")
-    connection.commit()
+    # Useful when debugging
+    # cursor.execute("DROP TABLE IF EXISTS movies;") 
+    # connection.commit()
+    
     cursor.execute("""CREATE TABLE movies (
         ALLOCINE_ID INT PRIMARY KEY,
         TITLE VARCHAR(150),
@@ -28,18 +30,11 @@ try:
         values = "VALUES ({})".format(",".join(["%s" for _ in df_columns])) # create string "VALUES(%s,%s,%s,%s,%s,%s,%s)"
         insert_stmt = "INSERT INTO movies ({}) {}".format(columns, values)
         psycopg2.extras.execute_batch(cursor, insert_stmt, df.values)
-        # inserted = cursor.fetchall()
-        # print("Inserted:", inserted,"\n")
         connection.commit()
-        print("OK")
-
 
 except (Exception, psycopg2.Error) as error :
-    print ("Error while connecting to PostgreSQL", error)
-
+    print ("Error while connecting to PostgreSQL. Psycopg2 error:", error)
 finally:
-    print("Finally")
-
     if(connection):
         cursor.close()
         connection.close()

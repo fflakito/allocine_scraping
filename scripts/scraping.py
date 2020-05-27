@@ -14,10 +14,15 @@ headers.update(
 )
 
 movies = {}
+starting_page = 4
+last_page = 5
+pages_scraped = 0
 
-for page_num in range(1,2):
+
+for page_num in range(starting_page, last_page + 1):
     reference_page_url = "http://www.allocine.fr/films/?page=" + str(page_num)
-    print("> Page:", reference_page_url)
+    pages_scraped += 1
+    print(f"> Fetching page {page_num} ({pages_scraped}/{last_page - starting_page + 1})")
     page_request = requests.get(reference_page_url, headers=headers)
     if page_request.status_code == 200:
 
